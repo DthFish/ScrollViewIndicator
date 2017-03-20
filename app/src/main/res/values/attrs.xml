@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!--added by Jinlin on 2016-6-13-->
+    <declare-styleable name="ScrollViewTabIndicator">
+        <attr name="tpi_tabPadding" format="reference|dimension"/>
+        <attr name="tpi_indicatorColor" format="reference|color"/>
+        <attr name="tpi_indicatorHeight" format="reference|dimension"/>
+        <attr name="tpi_underLineColor" format="reference|color"/>
+        <attr name="tpi_underLineHeight" format="reference|dimension"/>
+        <attr name="tpi_indicatorMode" format="integer">
+            <enum name="match_parent" value="-1"/>
+            <enum name="wrap_content" value="-2"/>
+        </attr>
+        <attr name="android:textAppearance"/>
+        <attr name="tpi_tabBackground" format="reference"/>
+        <attr name="tpi_mode" format="integer">
+            <enum name="scroll" value="0x00000000"/>
+            <enum name="fixed" value="0x00000001"/>
+        </attr>
+    </declare-styleable>
+</resources>

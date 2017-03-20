@@ -1,0 +1,11 @@
+.gradle
+/local.properties
+/.idea
+.idea/
+.DS_Store
+/build
+/captures
+*.iml
+/app/hash.txt
+/.repo
+/node_modules/

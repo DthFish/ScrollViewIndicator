@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+    <TextView
+        android:background="#000000"
+        android:layout_width="match_parent"
+        android:layout_height="48dp"/>
+
+    <com.dthfish.scrollviewindicator.ScrollViewTabIndicator
+        android:id="@+id/tab"
+        android:layout_width="match_parent"
+        android:layout_height="40dp"
+        android:background="@android:color/white"
+        android:textAppearance="@style/style_tab_selector"
+        app:tpi_indicatorColor="#d30775"
+        app:tpi_indicatorHeight="3dp"
+        app:tpi_indicatorMode="match_parent"
+        app:tpi_mode="fixed"
+        app:tpi_underLineColor="#00000000"/>
+
+    <android.support.v4.widget.NestedScrollView
+        android:id="@+id/sv"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/tv_1"
+                android:text="tv1"
+                android:layout_width="match_parent"
+                android:layout_height="200dp"
+                android:background="#ff0000"/>
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="200dp"
+                android:background="#00ff00"/>
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="200dp"
+                android:background="#0000ff"/>
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="200dp"
+                android:background="#ffff00"/>
+
+            <TextView
+                android:layout_marginTop="50dp"
+                android:id="@+id/tv_2"
+                android:text="tv2"
+                android:textColor="#000000"
+                android:layout_width="match_parent"
+                android:layout_height="200dp"
+                android:background="#00ffff"/>
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="200dp"
+                android:background="#ff00ff"/>
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="200dp"
+                android:background="#00ff00"/>
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="200dp"
+                android:background="#0000ff"/>
+
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="200dp"
+                android:background="#ffff00"/>
+            <com.dthfish.scrollviewindicator.ScrollViewTabIndicator
+                android:id="@+id/tab2"
+                android:layout_width="match_parent"
+                android:layout_height="40dp"
+                android:background="@android:color/white"
+                android:textAppearance="@style/style_tab_selector"
+                app:tpi_indicatorColor="#d30775"
+                app:tpi_indicatorHeight="3dp"
+                app:tpi_indicatorMode="match_parent"
+                app:tpi_mode="fixed"
+                app:tpi_underLineColor="#00000000"/>
+
+            <TextView
+                android:text="tv3"
+                android:id="@+id/tv_3"
+                android:textColor="#000000"
+                android:layout_width="match_parent"
+                android:layout_height="400dp"
+                android:background="#f0f00f"/>
+        </LinearLayout>
+
+    </android.support.v4.widget.NestedScrollView>
+</LinearLayout>
