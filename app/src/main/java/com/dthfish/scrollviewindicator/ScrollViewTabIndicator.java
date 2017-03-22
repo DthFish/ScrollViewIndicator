@@ -93,7 +93,7 @@ public class ScrollViewTabIndicator extends LinearLayout implements ViewPager.On
     private static final int MATCH_PARENT = -1;
     private static final int WRAP_CONTENT = -2;
     private int mActionBarHeight = dip2px(48);
-
+    private boolean mIsClick = false;
     /**
      * 仅仅用来协助完成动画
      */
@@ -270,10 +270,17 @@ public class ScrollViewTabIndicator extends LinearLayout implements ViewPager.On
              * 因此此处不设置延时将存在{@link #onScrollChange(NestedScrollView, int, int, int, int)} 中调用的 isScrolling() 不能拦截掉一些多余的处理,
              * 导致indicator回滚的现象, 暂时未考虑到更好的处理方式
              */
-            postDelayed(mScrollOffRunnable, 200);
-        } else
+            if(mIsClick) {
+                removeCallbacks(mScrollOffRunnable);
+                postDelayed(mScrollOffRunnable, 200);
+            }else{
+                mScrolling = false;
+            }
+            mIsClick = false;
+        } else {
             removeCallbacks(mScrollOffRunnable);
-        mScrolling = true;
+            mScrolling = true;
+        }
 
 
     }
@@ -330,6 +337,7 @@ public class ScrollViewTabIndicator extends LinearLayout implements ViewPager.On
         }
 
         if (mAssistViewPager != null) {
+            mIsClick = true;
             mAssistViewPager.setCurrentItem(position, true);
         }
     }
