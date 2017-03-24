@@ -18,7 +18,6 @@ import android.support.v4.widget.NestedScrollView;
 import android.support.v4.widget.Space;
 import android.text.TextUtils;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.util.TypedValue;
 import android.view.Gravity;
 import android.view.View;
@@ -298,7 +297,6 @@ public class ScrollViewTabIndicator extends LinearLayout implements ViewPager.On
 
     @Override
     public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
-        Log.d("pppp", "position: " + position + ",positionOffset: " + positionOffset + ",positionOffsetPixels: " + positionOffsetPixels);
         TabView tv_scroll = getTabView(position);
         TabView tv_next = getTabView(position + 1);
 
@@ -424,9 +422,6 @@ public class ScrollViewTabIndicator extends LinearLayout implements ViewPager.On
     @Override
     public void onScrollChange(NestedScrollView v, int scrollX, int scrollY, int oldScrollX, int oldScrollY) {
 
-        Log.d("tttt", "scrollX: " + scrollX + ",scrollY: " + scrollY
-                + ",oldScrollX: " + oldScrollX + ",oldScrollY: " + oldScrollY
-                + ",range" + v.computeVerticalScrollRange());
         if (mScrollListener != null) {
             mScrollListener.onScrollChange(v, scrollX, scrollY, oldScrollX, oldScrollY);
         }
@@ -466,7 +461,6 @@ public class ScrollViewTabIndicator extends LinearLayout implements ViewPager.On
                 }
             }
         }
-        Log.d("ttt", "location: " + locations.get(position));
         if (getCurrentIndex() == position) {
             return;
         }
@@ -503,6 +497,8 @@ public class ScrollViewTabIndicator extends LinearLayout implements ViewPager.On
         if (listener instanceof ScrollViewTabIndicator) {
             ScrollViewTabIndicator synchronize = (ScrollViewTabIndicator) listener;
             mAssistViewPager = synchronize.getAssistViewPager();
+            //接收覆盖监听，避免走多余的监听流程
+            mScrollListener = synchronize.mScrollListener;
             if (mAssistViewPager != null) {
                 mAssistViewPager.addOnPageChangeListener(this);
             } else {
