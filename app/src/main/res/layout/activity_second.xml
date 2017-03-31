@@ -2,7 +2,6 @@
 <RelativeLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
     <TextView
@@ -72,8 +71,44 @@
 
     <com.dthfish.scrollviewindicator.ScrollViewTabIndicator
         android:layout_below="@+id/tv_title"
-        android:visibility="invisible"
+        android:visibility="visible"
         android:id="@+id/tab"
+        android:layout_width="match_parent"
+        android:layout_height="40dp"
+        android:background="@android:color/white"
+        android:textAppearance="@style/style_tab_selector"
+        app:tpi_indicatorColor="#d30775"
+        app:tpi_indicatorHeight="3dp"
+        app:tpi_indicatorMode="match_parent"
+        app:tpi_mode="fixed"
+        app:tpi_underLineColor="#00000000"/>
+    <com.dthfish.scrollviewindicator.ScrollViewTabIndicator
+        android:id="@+id/tab3"
+        android:layout_below="@+id/tab"
+        android:layout_width="match_parent"
+        android:layout_height="40dp"
+        android:background="@android:color/white"
+        android:textAppearance="@style/style_tab_selector"
+        app:tpi_indicatorColor="#d30775"
+        app:tpi_indicatorHeight="3dp"
+        app:tpi_indicatorMode="match_parent"
+        app:tpi_mode="fixed"
+        app:tpi_underLineColor="#00000000"/>
+    <com.dthfish.scrollviewindicator.ScrollViewTabIndicator
+        android:layout_below="@id/tab3"
+        android:id="@+id/tab4"
+        android:layout_width="match_parent"
+        android:layout_height="40dp"
+        android:background="@android:color/white"
+        android:textAppearance="@style/style_tab_selector"
+        app:tpi_indicatorColor="#d30775"
+        app:tpi_indicatorHeight="3dp"
+        app:tpi_indicatorMode="match_parent"
+        app:tpi_mode="fixed"
+        app:tpi_underLineColor="#00000000"/>
+    <com.dthfish.scrollviewindicator.ScrollViewTabIndicator
+        android:layout_below="@id/tab4"
+        android:id="@+id/tab5"
         android:layout_width="match_parent"
         android:layout_height="40dp"
         android:background="@android:color/white"

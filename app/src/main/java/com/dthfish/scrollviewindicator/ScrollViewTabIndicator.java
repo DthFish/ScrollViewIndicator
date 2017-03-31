@@ -264,7 +264,7 @@ public class ScrollViewTabIndicator extends LinearLayout implements ViewPager.On
                         break;
                 }
 
-            /**
+            /*
              * 因 ScrollView 的滚动可能持续比ViewPager长,
              * 因此此处不设置延时将存在{@link #onScrollChange(NestedScrollView, int, int, int, int)} 中调用的 isScrolling() 不能拦截掉一些多余的处理,
              * 导致indicator回滚的现象, 暂时未考虑到更好的处理方式
@@ -281,18 +281,6 @@ public class ScrollViewTabIndicator extends LinearLayout implements ViewPager.On
             mScrolling = true;
         }
 
-
-    }
-
-    private Runnable mScrollOffRunnable = new Runnable() {
-        @Override
-        public void run() {
-            mScrolling = false;
-        }
-    };
-
-    public int getTextWidth(TextView tv) {
-        return (int) tv.getPaint().measureText(tv.getText().toString());
     }
 
     @Override
@@ -317,6 +305,18 @@ public class ScrollViewTabIndicator extends LinearLayout implements ViewPager.On
     public void onPageSelected(int position) {
         setCurrentItem(position);
     }
+
+    private Runnable mScrollOffRunnable = new Runnable() {
+        @Override
+        public void run() {
+            mScrolling = false;
+        }
+    };
+
+    public int getTextWidth(TextView tv) {
+        return (int) tv.getPaint().measureText(tv.getText().toString());
+    }
+
     private int mStatusBarHeight;
     @Override
     public void onClick(android.view.View v) {
@@ -433,7 +433,7 @@ public class ScrollViewTabIndicator extends LinearLayout implements ViewPager.On
         if (mStatusBarHeight == 0) {
             mStatusBarHeight = getBarHeight();
         }
-        int top = mActionBarHeight + getMeasuredHeight() + mStatusBarHeight;
+        int top = mActionBarHeight + getMeasuredHeight() + mStatusBarHeight;//TitleBar 高度 + 控件高度 + StatusBar 高度
         List<Integer> locations = new ArrayList<>();
         for (int i = 0, size = mViews.size(); i < size; i++) {
             locations.add(getViewLocation(i));
@@ -468,11 +468,12 @@ public class ScrollViewTabIndicator extends LinearLayout implements ViewPager.On
     }
 
     /**
-     * 因为会替换scrollview上的listener, 所以要传进来.
-     * 如果传进来是一个TabIndicator对象, 则两者状态会同步, 并且自定义的滚动监听要设置到第一个上边
-     *
-     * @param scrollView
-     * @param listener
+     * 因为会替换 scrollview 上的 listener, 所以要传进来.
+     * 如果传进来是一个 TabIndicator 对象, 则两者状态会同步, 并且自定义的滚动监听要设置到第一个上边
+     * @param scrollView 监听的 NestedScrollView
+     * @param listener 原先设置在 NestedScrollView 上的监听
+     * @param tabs tab 的标题
+     * @param views 各个 tab 对应的需要滚动到的 View
      */
     public void setScrollView(NestedScrollView scrollView, NestedScrollView.OnScrollChangeListener listener, List<String> tabs, List<View> views) {
         if (mScrollView == scrollView) {
@@ -522,9 +523,7 @@ public class ScrollViewTabIndicator extends LinearLayout implements ViewPager.On
         ViewGroup.LayoutParams p = new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, 1);
         mAssistViewPager.setLayoutParams(p);
 
-        /**
-         * 请注意这段代码, 因为会在 ScrollView 的子 view 中插入一个 ViewPager
-         */
+        //请注意这段代码, 因为会在 ScrollView 的子 view 中插入一个 ViewPager
         View viewGroup = mScrollView.getChildAt(0);
         if (viewGroup == null) {
             throw new IllegalStateException(" The child view of the ScrollView must be not null!");
