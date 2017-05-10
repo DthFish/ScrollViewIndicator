@@ -271,13 +271,11 @@ public class ScrollViewTabIndicator extends LinearLayout implements ViewPager.On
              * 因此此处不设置延时将存在{@link #onScrollChange(NestedScrollView, int, int, int, int)} 中调用的 isScrolling() 不能拦截掉一些多余的处理,
              * 导致indicator回滚的现象, 暂时未考虑到更好的处理方式
              */
+            mScrolling = false;
             if (mIsClick) {
                 removeCallbacks(mScrollOffRunnable);
                 postDelayed(mScrollOffRunnable, 200);
-            } else {
-                mScrolling = false;
             }
-
         } else {
             mScrolling = true;
         }
@@ -311,7 +309,6 @@ public class ScrollViewTabIndicator extends LinearLayout implements ViewPager.On
     private Runnable mScrollOffRunnable = new Runnable() {
         @Override
         public void run() {
-            mScrolling = false;
             mIsClick = false;
         }
     };
@@ -326,7 +323,7 @@ public class ScrollViewTabIndicator extends LinearLayout implements ViewPager.On
     public void onClick(android.view.View v) {
 
         int position = (Integer) v.getTag();
-        if(mSelectedPosition == position){
+        if (mSelectedPosition == position) {
             return;
         }
         if (mAssistViewPager != null) {
