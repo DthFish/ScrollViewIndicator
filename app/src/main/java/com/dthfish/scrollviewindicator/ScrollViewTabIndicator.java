@@ -249,9 +249,11 @@ public class ScrollViewTabIndicator extends LinearLayout implements ViewPager.On
         return mScrolling;
     }
 
+    int mPreState = ViewPager.SCROLL_STATE_IDLE;
+
     @Override
     public void onPageScrollStateChanged(int state) {
-        if (state == ViewPager.SCROLL_STATE_IDLE) {
+        if (mPreState == ViewPager.SCROLL_STATE_SETTLING && state == ViewPager.SCROLL_STATE_IDLE) {
             TextView tv = getTabView(mSelectedPosition);
             if (tv != null)
                 switch (mIndicatorMode) {
@@ -269,17 +271,17 @@ public class ScrollViewTabIndicator extends LinearLayout implements ViewPager.On
              * 因此此处不设置延时将存在{@link #onScrollChange(NestedScrollView, int, int, int, int)} 中调用的 isScrolling() 不能拦截掉一些多余的处理,
              * 导致indicator回滚的现象, 暂时未考虑到更好的处理方式
              */
-            if(mIsClick) {
+            if (mIsClick) {
                 removeCallbacks(mScrollOffRunnable);
                 postDelayed(mScrollOffRunnable, 200);
-            }else{
+            } else {
                 mScrolling = false;
             }
-            mIsClick = false;
+
         } else {
-            removeCallbacks(mScrollOffRunnable);
             mScrolling = true;
         }
+        mPreState = state;
 
     }
 
@@ -310,6 +312,7 @@ public class ScrollViewTabIndicator extends LinearLayout implements ViewPager.On
         @Override
         public void run() {
             mScrolling = false;
+            mIsClick = false;
         }
     };
 
@@ -318,9 +321,25 @@ public class ScrollViewTabIndicator extends LinearLayout implements ViewPager.On
     }
 
     private int mStatusBarHeight;
+
     @Override
     public void onClick(android.view.View v) {
+
         int position = (Integer) v.getTag();
+        if(mSelectedPosition == position){
+            return;
+        }
+        if (mAssistViewPager != null) {
+            mIsClick = true;
+
+            if (mSynchronize != null) {
+                mSynchronize.mIsClick = true;
+            }
+            if (mNextSynchronize != null) {
+                mNextSynchronize.mIsClick = true;
+            }
+            mAssistViewPager.setCurrentItem(position, true);
+        }
         if (mScrollView != null) {
             int location;
             location = getViewLocation(position);
@@ -332,11 +351,6 @@ public class ScrollViewTabIndicator extends LinearLayout implements ViewPager.On
 
 //            location -= getViewMarginTop(position);
             mScrollView.smoothScrollBy(0, location);
-        }
-
-        if (mAssistViewPager != null) {
-            mIsClick = true;
-            mAssistViewPager.setCurrentItem(position, true);
         }
     }
 
@@ -384,7 +398,6 @@ public class ScrollViewTabIndicator extends LinearLayout implements ViewPager.On
         TabView tv = getTabView(mSelectedPosition);
         if (tv != null)
             tv.setChecked(true);
-
         animateToTab(position);
     }
 
@@ -426,7 +439,7 @@ public class ScrollViewTabIndicator extends LinearLayout implements ViewPager.On
             mScrollListener.onScrollChange(v, scrollX, scrollY, oldScrollX, oldScrollY);
         }
 
-        if (isScrolling()) {
+        if (mIsClick) {
             return;
         }
 
@@ -470,15 +483,17 @@ public class ScrollViewTabIndicator extends LinearLayout implements ViewPager.On
     /**
      * 因为会替换 scrollview 上的 listener, 所以要传进来.
      * 如果传进来是一个 TabIndicator 对象, 则两者状态会同步, 并且自定义的滚动监听要设置到第一个上边
+     *
      * @param scrollView 监听的 NestedScrollView
-     * @param listener 原先设置在 NestedScrollView 上的监听
-     * @param tabs tab 的标题
-     * @param views 各个 tab 对应的需要滚动到的 View
+     * @param listener   原先设置在 NestedScrollView 上的监听
+     * @param tabs       tab 的标题
+     * @param views      各个 tab 对应的需要滚动到的 View
      */
     public void setScrollView(NestedScrollView scrollView, NestedScrollView.OnScrollChangeListener listener, List<String> tabs, List<View> views) {
         if (mScrollView == scrollView) {
             return;
         }
+
         if (tabs == null || views == null) {
             throw new IllegalArgumentException("tabs and views should not be null!");
         }
@@ -496,10 +511,12 @@ public class ScrollViewTabIndicator extends LinearLayout implements ViewPager.On
         }
         initTabs(tabs);
         if (listener instanceof ScrollViewTabIndicator) {
-            ScrollViewTabIndicator synchronize = (ScrollViewTabIndicator) listener;
-            mAssistViewPager = synchronize.getAssistViewPager();
+            mSynchronize = (ScrollViewTabIndicator) listener;
+            mSynchronize.mNextSynchronize = this;
+            mAssistViewPager = mSynchronize.getAssistViewPager();
             //接收覆盖监听，避免走多余的监听流程
-            mScrollListener = synchronize.mScrollListener;
+            mScrollListener = mSynchronize.mScrollListener;
+
             if (mAssistViewPager != null) {
                 mAssistViewPager.addOnPageChangeListener(this);
             } else {
@@ -509,6 +526,12 @@ public class ScrollViewTabIndicator extends LinearLayout implements ViewPager.On
             initAssistViewPager(tabs.size());
         }
     }
+
+    //传入
+    private ScrollViewTabIndicator mSynchronize;
+
+    //仅仅用于设置mIsClick
+    private ScrollViewTabIndicator mNextSynchronize;
 
     private ViewPager getAssistViewPager() {
 
