@@ -253,7 +253,8 @@ public class ScrollViewTabIndicator extends LinearLayout implements ViewPager.On
 
     @Override
     public void onPageScrollStateChanged(int state) {
-        if (mPreState == ViewPager.SCROLL_STATE_SETTLING && state == ViewPager.SCROLL_STATE_IDLE) {
+        if (state == ViewPager.SCROLL_STATE_IDLE) {
+            mScrolling = false;
             TextView tv = getTabView(mSelectedPosition);
             if (tv != null)
                 switch (mIndicatorMode) {
@@ -268,10 +269,9 @@ public class ScrollViewTabIndicator extends LinearLayout implements ViewPager.On
 
             /*
              * 因 ScrollView 的滚动可能持续比ViewPager长,
-             * 因此此处不设置延时将存在{@link #onScrollChange(NestedScrollView, int, int, int, int)} 中调用的 isScrolling() 不能拦截掉一些多余的处理,
+             * 因此此处不设置延时将存在{@link #onScrollChange(NestedScrollView, int, int, int, int)} 中调用的 mIsClick 不能拦截掉一些多余的处理,
              * 导致indicator回滚的现象, 暂时未考虑到更好的处理方式
              */
-            mScrolling = false;
             if (mIsClick) {
                 removeCallbacks(mScrollOffRunnable);
                 postDelayed(mScrollOffRunnable, 200);
