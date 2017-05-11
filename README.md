@@ -356,7 +356,7 @@ public class MainActivity extends AppCompatActivity implements NestedScrollView.
 
 
 ### 五、 5月11日更新
-#####1. 修复快速滑动 tab 没有切换的问题
+##### 1. 修复快速滑动 tab 没有切换的问题
 不再使用 isScrolling() 方法和 mScrolling 拦截 ScrollView 中的监听，改用 mIsClick 判断；修改原先 mScrollOffRunnable 中的 run 方法。
 ~~~java
 	@Override
