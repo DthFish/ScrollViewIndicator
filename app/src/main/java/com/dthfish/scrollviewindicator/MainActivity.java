@@ -33,14 +33,17 @@ public class MainActivity extends AppCompatActivity implements NestedScrollView.
         View view1 = findViewById(R.id.tv_1);
         View view2 = findViewById(R.id.tv_2);
         View view3 = findViewById(R.id.tv_3);
+        View view4 = findViewById(R.id.tv_4);
         List<String> names = new ArrayList<>();
         names.add("详情");
         names.add("评论");
         names.add("须知");
+        names.add("更多");
         List<View> views = new ArrayList<>();
         views.add(view1);
         views.add(view2);
         views.add(view3);
+        views.add(view4);
         mTab.setScrollView(mSv,this,names,views);
         //将mTab本身作为参数传入mTab2已达到同步状态
         mTab2.setScrollView(mSv,mTab,names,views);

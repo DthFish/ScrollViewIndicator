@@ -48,7 +48,7 @@
                 android:id="@+id/tv_1"
                 android:text="详情"
                 android:layout_width="match_parent"
-                android:layout_height="400dp"
+                android:layout_height="700dp"
                 android:background="#ff0000"/>
 
             <TextView
@@ -56,14 +56,14 @@
                 android:text="评论"
                 android:textColor="#000000"
                 android:layout_width="match_parent"
-                android:layout_height="400dp"
+                android:layout_height="700dp"
                 android:background="#00ffff"/>
             <TextView
                 android:id="@+id/tv_3"
                 android:text="须知"
                 android:textColor="#000000"
                 android:layout_width="match_parent"
-                android:layout_height="400dp"
+                android:layout_height="700dp"
                 android:background="#f0f00f"/>
         </LinearLayout>
 

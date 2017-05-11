@@ -18,7 +18,6 @@ import android.support.v4.widget.NestedScrollView;
 import android.support.v4.widget.Space;
 import android.text.TextUtils;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.util.TypedValue;
 import android.view.Gravity;
 import android.view.View;
@@ -246,12 +245,6 @@ public class ScrollViewTabIndicator extends LinearLayout implements ViewPager.On
             canvas.drawRect(getPaddingLeft(), getHeight() - mIndicatorHeight, getPaddingLeft() + getChildAt(0).getWidth(), getHeight(), mPaint);
     }
 
-    public boolean isScrolling() {
-        return mScrolling;
-    }
-
-    int mPreState = ViewPager.SCROLL_STATE_IDLE;
-
     @Override
     public void onPageScrollStateChanged(int state) {
         if (state == ViewPager.SCROLL_STATE_IDLE) {
@@ -275,13 +268,11 @@ public class ScrollViewTabIndicator extends LinearLayout implements ViewPager.On
              */
             if (mIsClick) {
                 removeCallbacks(mScrollOffRunnable);
-                postDelayed(mScrollOffRunnable, 200);
+                postDelayed(mScrollOffRunnable, 220);
             }
         } else {
             mScrolling = true;
         }
-        mPreState = state;
-
     }
 
     @Override
@@ -324,9 +315,7 @@ public class ScrollViewTabIndicator extends LinearLayout implements ViewPager.On
     public void onClick(android.view.View v) {
 
         int position = (Integer) v.getTag();
-        if (mSelectedPosition == position) {
-            return;
-        }
+
         if (mAssistViewPager != null) {
             mIsClick = true;
 
@@ -338,6 +327,7 @@ public class ScrollViewTabIndicator extends LinearLayout implements ViewPager.On
             }
             mAssistViewPager.setCurrentItem(position, true);
         }
+
         if (mScrollView != null) {
             int location;
             location = getViewLocation(position);
@@ -348,8 +338,16 @@ public class ScrollViewTabIndicator extends LinearLayout implements ViewPager.On
             location += -mActionBarHeight - getMeasuredHeight() - mStatusBarHeight;
 
 //            location -= getViewMarginTop(position);
-            mScrollView.smoothScrollBy(0, location);
+            //因为这里经常会出现 scrollView 没有滚动的现象这里才加了 delay
+            final int finalLocation = position == 0 ? (location > 0 ? location - 1 : location + 1) : location;
+            mScrollView.postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    mScrollView.smoothScrollBy(0, finalLocation);
+                }
+            },100);
         }
+
     }
 
     private int getViewMarginTop(int position) {
@@ -475,7 +473,6 @@ public class ScrollViewTabIndicator extends LinearLayout implements ViewPager.On
         if (getCurrentIndex() == position) {
             return;
         }
-        Log.d("dddddd", "onScrollChange: " + getCurrentIndex() + "--to--" + position);
         mAssistViewPager.setCurrentItem(position, true);
     }
 
