@@ -18,6 +18,7 @@ import android.support.v4.widget.NestedScrollView;
 import android.support.v4.widget.Space;
 import android.text.TextUtils;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.util.TypedValue;
 import android.view.Gravity;
 import android.view.View;
@@ -474,6 +475,7 @@ public class ScrollViewTabIndicator extends LinearLayout implements ViewPager.On
         if (getCurrentIndex() == position) {
             return;
         }
+        Log.d("dddddd", "onScrollChange: " + getCurrentIndex() + "--to--" + position);
         mAssistViewPager.setCurrentItem(position, true);
     }
 
