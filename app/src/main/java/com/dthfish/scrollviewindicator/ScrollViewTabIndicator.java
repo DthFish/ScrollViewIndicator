@@ -317,14 +317,7 @@ public class ScrollViewTabIndicator extends LinearLayout implements ViewPager.On
         int position = (Integer) v.getTag();
 
         if (mAssistViewPager != null) {
-            mIsClick = true;
-
-            if (mSynchronize != null) {
-                mSynchronize.mIsClick = true;
-            }
-            if (mNextSynchronize != null) {
-                mNextSynchronize.mIsClick = true;
-            }
+            synchronizeClickStatus();
             mAssistViewPager.setCurrentItem(position, true);
         }
 
@@ -345,9 +338,19 @@ public class ScrollViewTabIndicator extends LinearLayout implements ViewPager.On
                 public void run() {
                     mScrollView.smoothScrollBy(0, finalLocation);
                 }
-            },100);
+            }, 100);
         }
 
+    }
+
+    private void synchronizeClickStatus() {
+        mIsClick = true;
+        if (mSynchronize != null && !mSynchronize.mIsClick) {
+            mSynchronize.synchronizeClickStatus();
+        }
+        if (mNextSynchronize != null && !mNextSynchronize.mIsClick) {
+            mNextSynchronize.synchronizeClickStatus();
+        }
     }
 
     private int getViewMarginTop(int position) {

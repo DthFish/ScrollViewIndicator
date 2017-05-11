@@ -355,7 +355,116 @@ public class MainActivity extends AppCompatActivity implements NestedScrollView.
  * 默认用48dp的像素值作为 ActionBar 的高度, 计算滚动距离, 如果有需求用{{@link #setActionBarHeight(int)}} 来设置；
 
 
-### 五、最后
-感谢 [J!nL!n](https://daijinlin.com/) 同学的 TabIndicator 以及 CF 同学的启发。
+### 五、 5月11日更新
+#####1. 修复快速滑动 tab 没有切换的问题
+不再使用 isScrolling() 方法和 mScrolling 拦截 ScrollView 中的监听，改用 mIsClick 判断；修改原先 mScrollOffRunnable 中的 run 方法。
+~~~java
+	@Override
+    public void onPageScrollStateChanged(int state) {
+        if (state == ViewPager.SCROLL_STATE_IDLE) {
+            mScrolling = false;
+            TextView tv = getTabView(mSelectedPosition);
+            if (tv != null)
+                switch (mIndicatorMode) {
+                    case MATCH_PARENT:
+                        updateIndicator(tv.getLeft(), tv.getMeasuredWidth());
+                        break;
+                    case WRAP_CONTENT:
+                        int textWidth = getTextWidth(tv);
+                        updateIndicator(tv.getLeft() + tv.getWidth() / 2 - textWidth / 2, textWidth);
+                        break;
+                }
+
+            /*
+             * 因 ScrollView 的滚动可能持续比 ViewPager 长,
+             * 因此此处不设置延时将存在{@link #onScrollChange(NestedScrollView, int, int, int, int)} 中调用的 mIsClick 不能拦截掉一些多余的处理,
+             * 导致indicator回滚的现象, 暂时未考虑到更好的处理方式
+             */
+            if (mIsClick) {
+                removeCallbacks(mScrollOffRunnable);
+                postDelayed(mScrollOffRunnable, 220);
+            }
+        } else {
+            mScrolling = true;
+        }
+    }
+
+    private Runnable mScrollOffRunnable = new Runnable() {
+        @Override
+        public void run() {
+            mIsClick = false;
+        }
+    };
+~~~
+
+修改「3.5」中的同步代码。
+~~~java
+	if (listener instanceof ScrollViewTabIndicator) {
+        mSynchronize = (ScrollViewTabIndicator) listener;
+        mSynchronize.mNextSynchronize = this;
+        mAssistViewPager = mSynchronize.getAssistViewPager();
+        //接收覆盖监听，避免走多余的监听流程
+        mScrollListener = mSynchronize.mScrollListener;
+        if (mAssistViewPager != null) {
+            mAssistViewPager.addOnPageChangeListener(this);
+        } else {
+            initAssistViewPager(tabs.size());
+        }
+     } else {
+        initAssistViewPager(tabs.size());
+     }
+~~~
+可以看到这里不仅保持传进来的 ScrollViewTabIndicator 对象为 mSynchronize，而且如果本身如果被设置给其他的 ScrollViewTabIndicator 他的 mNextSynchronize 也会被赋值。保持这两个引用主要是为了保证多个 ScrollViewTabIndicator 同步时，在点击不同对象的 tab 的时候，他们的 mIsClick 能保持一致，下边看一下 onClick(View v) 方法的改变。
+~~~java
+    @Override
+    public void onClick(android.view.View v) {
+
+        int position = (Integer) v.getTag();
+
+        if (mAssistViewPager != null) {
+            synchronizeClickStatus();
+            mAssistViewPager.setCurrentItem(position, true);
+        }
+
+        if (mScrollView != null) {
+            int location;
+            location = getViewLocation(position);
+            // 待滑动距离 = 当前坐标 - (ActionBar高度) - indicator高度 - 状态栏高度
+            if (mStatusBarHeight == 0) {
+                mStatusBarHeight = getBarHeight();
+            }
+            location += -mActionBarHeight - getMeasuredHeight() - mStatusBarHeight;
+
+//            location -= getViewMarginTop(position);
+            //因为这里经常会出现 scrollView 没有滚动的现象这里才加了 delay
+            final int finalLocation = position == 0 ? (location > 0 ? location - 1 : location + 1) : location;
+            mScrollView.postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    mScrollView.smoothScrollBy(0, finalLocation);
+                }
+            }, 100);
+        }
+
+    }
+
+    private void synchronizeClickStatus() {
+        mIsClick = true;
+        if (mSynchronize != null && !mSynchronize.mIsClick) {
+            mSynchronize.synchronizeClickStatus();
+        }
+        if (mNextSynchronize != null && !mNextSynchronize.mIsClick) {
+            mNextSynchronize.synchronizeClickStatus();
+        }
+    }
+
+~~~
+修改了两方面，一是点击的时候同时修改了前一个和后一个同步的 ScrollViewTabIndicator 的 mIsClick，二是因为直接调用 ScrollView 的 smoothScrollBy 方法，如果点击速度过快 smoothScrollBy 方法中对点击的时间间隔做了判断，导致 ScrollView 常常滚动不到预期的位置，所以做了 100 毫秒的延迟处理。
+
+到这里对于快速滚动的处理算是完成了，可能还有其他的问题，如果大家有发现问题或者意见还望提醒我改正，谢谢。
+
+
+### 六、 最后
+感谢 [J!nL!n](https://daijinlin.com/) 同学的 TabIndicator 以及 CF 同学的思路。
 
 [这里有源码](https://github.com/DthFish/ScrollViewIndicator)
