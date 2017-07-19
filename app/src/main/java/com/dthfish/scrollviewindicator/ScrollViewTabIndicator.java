@@ -325,9 +325,7 @@ public class ScrollViewTabIndicator extends LinearLayout implements ViewPager.On
             int location;
             location = getViewLocation(position);
             // 待滑动距离 = 当前坐标 - (ActionBar高度) - indicator高度 - 状态栏高度
-            if (mStatusBarHeight == 0) {
-                mStatusBarHeight = getBarHeight();
-            }
+
             location += -mActionBarHeight - getMeasuredHeight() - mStatusBarHeight;
 
 //            location -= getViewMarginTop(position);
@@ -341,6 +339,14 @@ public class ScrollViewTabIndicator extends LinearLayout implements ViewPager.On
             }, 100);
         }
 
+    }
+
+    @Override
+    protected void onLayout(boolean changed, int l, int t, int r, int b) {
+        super.onLayout(changed, l, t, r, b);
+        if (mStatusBarHeight == 0) {
+            mStatusBarHeight = getBarHeight();
+        }
     }
 
     private void synchronizeClickStatus() {
@@ -442,9 +448,6 @@ public class ScrollViewTabIndicator extends LinearLayout implements ViewPager.On
             return;
         }
 
-        if (mStatusBarHeight == 0) {
-            mStatusBarHeight = getBarHeight();
-        }
         int top = mActionBarHeight + getMeasuredHeight() + mStatusBarHeight;//TitleBar 高度 + 控件高度 + StatusBar 高度
         List<Integer> locations = new ArrayList<>();
         for (int i = 0, size = mViews.size(); i < size; i++) {
